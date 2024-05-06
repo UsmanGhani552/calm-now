@@ -21,9 +21,10 @@ class User extends Authenticatable
         'first_name',
         'last_name',
         'email',
+        'phone',
         'password',
-        'google_id',
-        'fcm_token'
+        'social_id',
+        'provider'
     ];
 
     /**

@@ -1,13 +1,12 @@
 <?php
 
-use App\Http\Controllers\Api\RegisterController;
-use App\Http\Controllers\Api\ExerciseController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\ExerciseController;
+use App\Http\Controllers\Api\ForgetPasswordController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\SoundController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -25,27 +24,39 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
-
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
+Route::post('social-login', [AuthController::class, 'socialLogin']);
+// Route::post('auth/facebook/callback', [AuthController::class, 'loginWithFacebook']);
 
-Route::get('auth/google/callback', [AuthController::class, 'loginWithGoogle']);
+Route::post('/send-reset-token',[ForgetPasswordController::class,'sendResetToken']);
+Route::post('/reset-password',[ForgetPasswordController::class,'resetPassword']);
 
+//exercise
+Route::post('store-exercise', [ExerciseController::class,'storeExercise']);
+Route::get('get-exercises', [ExerciseController::class,'getExercise']);
+
+//sound
+Route::post('/store-sound', [SoundController::class, 'storeSound']);
 
 Route::middleware('auth:api')->group( function () {
 
-    //exercise
-    Route::post('store-exercise', [ExerciseController::class,'storeExercise']);
-    Route::get('get-exercises', [ExerciseController::class,'getExercise']);
 
-    //sound
-    Route::post('/store-sound', [SoundController::class, 'storeSound']);
     Route::get('/get-sounds-by-category/{id}', [SoundController::class, 'getSoundsByCategory']);
+    Route::get('/get-sound-by-id/{id}', [SoundController::class, 'getSoundById']);
+    Route::get('/delete-sound/{id}', [SoundController::class, 'deleteSound']);
 
     //user
+    Route::get('/get-user', [UserController::class, 'getUser']);
     Route::post('/edit-profile', [UserController::class, 'editProfile']);
     Route::post('/edit-profile-image', [UserController::class, 'editProfileImage']);
+    Route::get('/delete-account', [UserController::class, 'deleteAccount']);
+    Route::post('/update-password', [UserController::class, 'updatePassword']);
 
     //notification
     Route::get('/send-not',[NotificationController::class,'pushNotification']);
+
+    //logout
+    Route::get('logout', [AuthController::class, 'logout']);
+
 });

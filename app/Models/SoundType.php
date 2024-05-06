@@ -13,5 +13,5 @@ class SoundType extends Model
 
     protected $fillale = [
         'name'
-    ];  
+    ];
 }

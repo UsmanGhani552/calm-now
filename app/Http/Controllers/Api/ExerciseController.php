@@ -14,7 +14,10 @@ class ExerciseController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'image' => 'required|image',
+            'password' => 'required',
         ]);
+
+        Exercise::create([$validator]);
 
         if($validator->fails()){
             return response()->json([
@@ -44,7 +47,7 @@ class ExerciseController extends Controller
 
     public function getExercise(){
 
-        $exercises = Exercise::all();
+        $exercises = Exercise::all();   
 
         return response()->json([
             'status' => 'success',
