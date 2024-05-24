@@ -2,12 +2,12 @@
     data-kt-drawer-activate="{default: true, lg: false}" data-kt-drawer-overlay="true" data-kt-drawer-width="225px"
     data-kt-drawer-direction="start" data-kt-drawer-toggle="#kt_app_sidebar_mobile_toggle">
     <!--begin::Logo-->
-    <div class="app-sidebar-logo px-6" id="kt_app_sidebar_logo">
+    <div class="app-sidebar-logo" id="kt_app_sidebar_logo">
         <!--begin::Logo image-->
-        <a>
-            <img alt="Logo" src="{{ asset('dashboard_style/assets/media/logos/default-dark.svg') }}"
+        <a class="m-auto">
+            <img alt="Logo" src="{{ asset('dashboard_style/assets/media/logos/main-logo.png') }}"
                 class="h-25px app-sidebar-logo-default" />
-            <img alt="Logo" src="{{ asset('dashboard_style/assets/media/logos/default-small.svg') }}"
+            <img alt="Logo" src="{{ asset('dashboard_style/assets/media/logos/small-logo.png') }}"
                 class="h-20px app-sidebar-logo-minimize" />
         </a>
         <!--end::Logo image-->
