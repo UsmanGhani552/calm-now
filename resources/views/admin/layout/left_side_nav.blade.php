@@ -2,12 +2,12 @@
     data-kt-drawer-activate="{default: true, lg: false}" data-kt-drawer-overlay="true" data-kt-drawer-width="225px"
     data-kt-drawer-direction="start" data-kt-drawer-toggle="#kt_app_sidebar_mobile_toggle">
     <!--begin::Logo-->
-    <div class="app-sidebar-logo px-6" id="kt_app_sidebar_logo">
+    <div class="app-sidebar-logo" id="kt_app_sidebar_logo">
         <!--begin::Logo image-->
-        <a>
-            <img alt="Logo" src="{{ asset('dashboard_style/assets/media/logos/default-dark.svg') }}"
+        <a class="m-auto">
+            <img alt="Logo" src="{{ asset('dashboard_style/assets/media/logos/main-logo.png') }}"
                 class="h-25px app-sidebar-logo-default" />
-            <img alt="Logo" src="{{ asset('dashboard_style/assets/media/logos/default-small.svg') }}"
+            <img alt="Logo" src="{{ asset('dashboard_style/assets/media/logos/small-logo.png') }}"
                 class="h-20px app-sidebar-logo-minimize" />
         </a>
         <!--end::Logo image-->
@@ -214,6 +214,31 @@
                             <!--end::Svg Icon-->
                         </span>
                         <span class="menu-title">Sound Instruction</span>
+                    </a>
+                    <!--end:Menu link-->
+                </div>
+                <!--end:Menu item-->
+                <!--end:Menu item-->
+                <div class="menu-item
+                    {{-- {{ Route::is('subscription-product.index') ? 'show' : '' }}
+                    {{ Route::is('subscription-product.create') ? 'show' : '' }}
+                    {{ Route::is('subscription-product.edit') ? 'show' : '' }} --}}
+                    ">
+                    <!--begin:Menu link-->
+                    <a class="menu-link  {{ Route::is('subscription-product.index') ? 'active' : '' }}
+                    {{ Route::is('subscription-product.create') ? 'active' : '' }}
+                    {{ Route::is('subscription-product.edit') ? 'active' : '' }}"
+                        href="{{ route('subscription-product.index') }}">
+                        <span class="menu-icon">
+                            <!--begin::Svg Icon | path: icons/duotune/general/gen002.svg-->
+                            <!--begin::Svg Icon | path: /var/www/preview.keenthemes.com/kt-products/docs/metronic/html/releases/2023-01-26-051612/core/html/src/media/icons/duotune/ecommerce/ecm007.svg-->
+                            <!--begin::Svg Icon | path: /var/www/preview.keenthemes.com/kt-products/docs/metronic/html/releases/2023-01-26-051612/core/html/src/media/icons/duotune/ecommerce/ecm004.svg-->
+                            <i class="fa-solid fa-person-chalkboard"></i>
+                            <!--end::Svg Icon-->
+                            <!--end::Svg Icon-->
+                            <!--end::Svg Icon-->
+                        </span>
+                        <span class="menu-title">Subscription Product</span>
                     </a>
                     <!--end:Menu link-->
                 </div>

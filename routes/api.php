@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\ExerciseController;
 use App\Http\Controllers\Api\ForgetPasswordController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\SoundController;
+use App\Http\Controllers\Api\SubscriptionController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -32,9 +33,13 @@ Route::post('social-login', [AuthController::class, 'socialLogin']);
 Route::post('/send-reset-token',[ForgetPasswordController::class,'sendResetToken']);
 Route::post('/reset-password',[ForgetPasswordController::class,'resetPassword']);
 
+Route::post('store-receipt', [SubscriptionController::class,'storeReceipt']);
+Route::post('cancel-subscription', [SubscriptionController::class,'cancelSubscription']);
 //exercise
 Route::post('store-exercise', [ExerciseController::class,'storeExercise']);
 Route::get('get-exercises', [ExerciseController::class,'getExercise']);
+
+Route::get('get-product-ids', [SubscriptionController::class,'getProductId']);
 
 //sound
 Route::post('/store-sound', [SoundController::class, 'storeSound']);
@@ -55,6 +60,7 @@ Route::middleware('auth:api')->group( function () {
 
     //notification
     Route::get('/send-not',[NotificationController::class,'pushNotification']);
+    Route::get('/get-notifications', [NotificationController::class, 'getNotifications'])->name('get-notifications');
 
     //logout
     Route::get('logout', [AuthController::class, 'logout']);

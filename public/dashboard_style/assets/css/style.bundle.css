@@ -9158,11 +9158,11 @@ fieldset:disabled .btn {
 }
 
 .h-20px {
-    height: 20px !important
+    height: 50px !important
 }
 
 .h-25px {
-    height: 25px !important
+    height: 80px !important
 }
 
 .h-30px {
@@ -59100,6 +59100,7 @@ html:not([data-theme=dark]) {
 
     .app-sidebar-logo {
         height: var(--kt-app-header-height);
+        /* height: 100px; */
         display: flex;
         align-items: center;
         justify-content: space-between;

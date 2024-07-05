@@ -60,6 +60,10 @@ class AuthController extends Controller
             $user = Auth::user();
             // dd('asd');
             $token =  $user->createToken('Calm-Now')->accessToken;
+                if ($user->subscription) {
+                    $user->subscription->subscription_product;
+                }
+
 
             return response()->json([
                 'status' => 'success',
@@ -91,7 +95,7 @@ class AuthController extends Controller
             'first_name' => 'required',
             'last_name' => 'required',
             'email' => 'required|email',
-            'social_id' => 'required|numeric',
+            'social_id' => 'required|string',
             'provider' => 'required|in:google,facebook,apple',
         ]);
         if ($validator->fails()) {
@@ -104,7 +108,8 @@ class AuthController extends Controller
             // dd($userDetails);
 
             // Check if the user already exists in the database
-            $user = User::where('email', $request->email)->first();
+            // $user = User::where('email', $request->email)->first();
+            $user = User::where('social_id', $request->social_id)->where('provider', $request->provider)->first();
 
             if (!$user) {
                 // User doesn't exist, create a new user
@@ -119,7 +124,9 @@ class AuthController extends Controller
             }
             // Generate an API token for the user
             $token = $user->createToken('MyApp')->accessToken;
-
+            if ($user->subscription) {
+                $user->subscription->subscription_product;
+            }
             return response()->json([
                 'message' => 'User logged in with ' . ucfirst($request->provider) . ' successfully',
                 'user' => $user,

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notification;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -76,5 +78,14 @@ class NotificationController extends Controller
         }
         curl_close( $ch );
         return $result;
+    }
+
+    public function getNotifications(){
+        $user = Auth::user();
+        $notifications = Notification::where('user_id',$user->id)->get();
+        return response()->json([   
+            'status_code'=> 200,
+            'notifications' => $notifications,
+        ]);
     }
 }

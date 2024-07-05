@@ -1,10 +1,12 @@
 <?php
 
+use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\ExerciseController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\SoundController;
 use App\Http\Controllers\SoundInstructionController;
+use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\UserController;
 use App\Models\Exercise;
 use Illuminate\Support\Facades\Route;
@@ -64,6 +66,16 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/update/{soundInstruction}', 'update')->name('update');
         Route::get('/destroy/{soundInstruction}', 'delete')->name('delete');
     });
+    Route::controller(SubscriptionController::class)->prefix('subscription-product')->name('subscription-product.')->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('/create', 'create')->name('create');
+        Route::post('/store', 'store')->name('store');
+        Route::get('/edit/{subscriptionProduct}', 'edit')->name('edit');
+        Route::post('/update/{subscriptionProduct}', 'update')->name('update');
+        Route::get('/destroy/{subscriptionProduct}', 'delete')->name('delete');
+    });
+    
+
 });
 
 Auth::routes();

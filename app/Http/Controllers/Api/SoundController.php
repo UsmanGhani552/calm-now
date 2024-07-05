@@ -34,12 +34,12 @@ class SoundController extends Controller
             ]);
         }
         $sound = new Sound();
-        $sound->name = $request->name;
-        $sound->description = $request->description;
-        $sound->time = $request->time;
-        $sound->duration = $request->duration;
-        $sound->exercise_id = $request->exercise_id;
-        $sound->sound_type_id = $request->sound_type_id;
+        $sound->name = $request->name ;
+        $sound->description = $request->description ;
+        $sound->time = $request->time ;
+        $sound->duration = $request->duration ;
+        $sound->exercise_id = $request->exercise_id ;
+        $sound->sound_type_id = $request->sound_type_id ;
 
         if ($request->hasfile('image')) {
             $file = $request->file('image');
