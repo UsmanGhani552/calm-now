@@ -21,6 +21,7 @@ class Subscription extends Model
     public function user(){
         return $this->belongsTo(User::class,'user_id');
     }
+    
     public function subscription_product(){
         return $this->belongsTo(SubscriptionProduct::class,'product_id');
     }

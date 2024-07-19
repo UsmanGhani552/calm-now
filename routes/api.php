@@ -44,6 +44,9 @@ Route::get('get-product-ids', [SubscriptionController::class,'getProductId']);
 //sound
 Route::post('/store-sound', [SoundController::class, 'storeSound']);
 
+
+
+
 Route::middleware('auth:api')->group( function () {
 
 
@@ -66,3 +69,5 @@ Route::middleware('auth:api')->group( function () {
     Route::get('logout', [AuthController::class, 'logout']);
 
 });
+
+Route::post('/send-notification', [NotificationController::class, 'sendPushNotification']);

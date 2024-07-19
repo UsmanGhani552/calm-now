@@ -75,7 +75,10 @@ class SubscriptionController extends Controller
         try{
             $subscription = Subscription::find($request->subscription_id);
             if ($subscription->status == 0) {
-                return response()->json(['error' => 'Subscription is already inactive'], 400);
+                return response()->json([
+                    'status_code' => 200,
+                    'success' => 'Subscription cancelled successfully'
+                ]);
             }
     
             $subscription->status = 0;

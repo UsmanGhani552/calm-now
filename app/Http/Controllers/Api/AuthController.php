@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\DeviceToken;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -46,25 +47,47 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
+        // Validate the request inputs
         $validator = Validator::make($request->all(), [
             'email' => 'required|email',
             'password' => 'required',
+            'fcm_token' => 'required',
         ]);
 
+        // Return errors if validation fails
         if ($validator->fails()) {
             return response()->json([
                 'errors' => $validator->errors(),
-            ]);
+            ], 422);
         }
+
+        // Attempt to authenticate the user
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             $user = Auth::user();
-            // dd('asd');
-            $token =  $user->createToken('Calm-Now')->accessToken;
-                if ($user->subscription) {
-                    $user->subscription->subscription_product;
-                }
 
+            // Load the user with their subscription
+            $user->load('activeSubscription');
 
+            // Check if the token already exists
+            $existingToken = DeviceToken::where('user_id', $user->id)
+                ->where('fcm_token', $request->fcm_token)
+                ->first();
+
+            // If the token does not exist, create a new DeviceToken
+            if (!$existingToken) {
+                $userToken = new DeviceToken();
+                $userToken->user_id = $user->id;
+                $userToken->fcm_token = $request->fcm_token;
+                $userToken->save();
+            }
+
+            // Generate an access token for the user
+            $token = $user->createToken('Calm-Now')->accessToken;
+
+            $user->subscription = $user->activeSubscription;
+            unset($user->activeSubscription);
+            // dd($user);
+            // Return the response with the user data and token
             return response()->json([
                 'status' => 'success',
                 'message' => 'User Login Successfully',
@@ -72,11 +95,13 @@ class AuthController extends Controller
                 'token' => $token
             ]);
         } else {
+            // Return an error response if authentication fails
             return response()->json([
-                'error' => 'Unauthorised'
-            ]);
+                'error' => 'Invalid email or password'
+            ], 401);
         }
     }
+
 
     public function logout()
     {
@@ -90,27 +115,46 @@ class AuthController extends Controller
 
     public function socialLogin(Request $request)
     {
+        if ($request->provider == 'apple') {
             // Validate incoming request
-        $validator = Validator::make($request->all(), [
-            'first_name' => 'required',
-            'last_name' => 'required',
-            'email' => 'required|email',
-            'social_id' => 'required|string',
-            'provider' => 'required|in:google,facebook,apple',
-        ]);
+            $validator = Validator::make($request->all(), [
+                'social_id' => 'required|string',
+                'provider' => 'required|in:google,facebook,apple',
+                'fcm_token' => 'required',
+            ]);
+        } else {
+            // Validate incoming request
+            $validator = Validator::make($request->all(), [
+                'first_name' => 'required',
+                'last_name' => 'required',
+                'email' => 'required|email',
+                'social_id' => 'required|string',
+                'provider' => 'required|in:google,facebook,apple',
+                'fcm_token' => 'required',
+            ]);
+        }
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()], 422);
         }
 
         try {
-            // Retrieve user details from Google using the token
+            // $existingEmail = User::where('social_id','!=', $request->social_id)->where('email', $request->email)->first();
+            // if ($existingEmail) {
+            //     return response()->json([
+            //         'status_code' => 400,
+            //         'message' => 'Email Already Taken',
+            //     ]);
+            // }
+            
             // $userDetails = Socialite::driver('google')->userFromToken($request->token);
-            // dd($userDetails);
-
-            // Check if the user already exists in the database
-            // $user = User::where('email', $request->email)->first();
+            $existingProvider = User::where('social_id', $request->social_id)->where('provider', '!=', $request->provider)->first();
+            if ($existingProvider) {
+                return response()->json([
+                    'status_code' => 400,
+                    'message' => 'User logged in with differnt provider',
+                ]);
+            }
             $user = User::where('social_id', $request->social_id)->where('provider', $request->provider)->first();
-
             if (!$user) {
                 // User doesn't exist, create a new user
                 $user = User::create([
@@ -121,6 +165,16 @@ class AuthController extends Controller
                     'social_id' => $request->social_id,
                     'provider' => $request->provider,
                 ]);
+            }
+
+            $existingToken = DeviceToken::where('user_id', $user->id)
+                ->where('fcm_token', $request->fcm_token)
+                ->first();
+            if (!$existingToken) {
+                $user_token = new DeviceToken();
+                $user_token->user_id = $user->id;
+                $user_token->fcm_token = $request->fcm_token;
+                $user_token->save();
             }
             // Generate an API token for the user
             $token = $user->createToken('MyApp')->accessToken;
@@ -133,49 +187,8 @@ class AuthController extends Controller
                 'token' => $token,
             ]);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Unable to authenticate with'. ucfirst($request->provider) . $e->getMessage()], 500);
+            return response()->json(['error' => 'Unable to authenticate with ' . ucfirst($request->provider) . $e->getMessage()], 500);
         }
     }
-    public function loginWithFacebook(Request $request)
-    {
-        // Validate incoming request
-        $validator = Validator::make($request->all(), [
-            'token' => 'required',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 422);
-        }
-
-        try {
-            // Retrieve user details from Facebook using the token
-            $userDetails = Socialite::driver('facebook')->userFromToken($request->token);
-            // dd($userDetails);
-
-            // Check if the user already exists in the database
-            $user = User::where('email', $userDetails->email)->first();
-
-            if (!$user) {
-                // User doesn't exist, create a new user
-                $user = User::create([
-                    'first_name' => $userDetails->name,
-                    'email' => $userDetails->email,
-                    'password' => Hash::make('user1234'),
-                    'google_id' => $userDetails->id,
-                ]);
-            }
-            // Generate an API token for the user
-            $token = $user->createToken('MyApp')->accessToken;
-
-            return response()->json([
-                'message' => 'User logged in with Google successfully',
-                'user' => $user,
-                'token' => $token,
-            ]);
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Unable to authenticate with Google.' . $e->getMessage()], 500);
-        }
-    }
-
-
+   
 }
